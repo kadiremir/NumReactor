@@ -3,6 +3,7 @@ import SwiftUI
 struct MainMenuView: View {
     @EnvironmentObject private var gameState: GameState
     @Binding var screen: AppScreen
+    @State private var titlePulsing = false
 
     var body: some View {
         ZStack {
@@ -18,8 +19,14 @@ struct MainMenuView: View {
                 .foregroundStyle(
                     LinearGradient(colors: [.cyan, .blue.opacity(0.85)], startPoint: .top, endPoint: .bottom)
                 )
-                .shadow(color: .cyan.opacity(0.5), radius: 24)
+                .shadow(color: .cyan.opacity(titlePulsing ? 0.75 : 0.5), radius: 24)
                 .tracking(2)
+                .scaleEffect(titlePulsing ? 1.03 : 1.0)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
+                        titlePulsing = true
+                    }
+                }
 
                 Text("BEST \(gameState.bestScore)")
                     .font(.system(size: 15, weight: .semibold, design: .monospaced))
@@ -38,7 +45,7 @@ struct MainMenuView: View {
                 .buttonStyle(ReactorButtonStyle(prominent: true))
                 .padding(.horizontal, 48)
 
-                Text("tap orbiting stones to match the reactor's target")
+                Text("Tap orbiting stones to match the reactor's target")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(.white.opacity(0.35))
                     .padding(.horizontal, 40)

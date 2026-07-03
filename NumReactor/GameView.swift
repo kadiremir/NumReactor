@@ -45,7 +45,7 @@ struct GameView: View {
                 // still-settling embers, 1.15 s after the timer dies. Any tap
                 // restarts once armed (meltT > 1.3 s in the reference).
                 if meltdownOverlayVisible {
-                    ContainmentOverlay(variant: .meltdown, score: gameState.score)
+                    ContainmentOverlay(variant: .meltdown, score: gameState.score, isNewBest: gameState.isNewBest)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             guard retryArmed else { return }

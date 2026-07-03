@@ -12,10 +12,12 @@ struct ContainmentOverlay: View {
 
     let variant: Variant
     let score: Int
+    var isNewBest: Bool = false
 
     private static let ember = Color(red: 255 / 255, green: 122 / 255, blue: 68 / 255)     // #FF7A44
     private static let emberScore = Color(red: 255 / 255, green: 154 / 255, blue: 90 / 255) // #FF9A5A
     private static let accent = Color(red: 62 / 255, green: 166 / 255, blue: 255 / 255)     // #3EA6FF
+    private static let gold = Color(red: 255 / 255, green: 205 / 255, blue: 92 / 255)       // #FFCD5C
 
     /// Comma thousands separators, as in the reference ("1,240") — not locale-dependent.
     private var formattedScore: String {
@@ -77,6 +79,13 @@ struct ContainmentOverlay: View {
             Text(formattedScore)
                 .font(.custom("ChakraPetch-Bold", size: 42))
                 .foregroundStyle(Self.emberScore)
+            if isNewBest {
+                Text("★ NEW BEST")
+                    .font(.custom("ChakraPetch-SemiBold", size: 11))
+                    .tracking(3)
+                    .foregroundStyle(Self.gold)
+                    .padding(.top, 4)
+            }
             Text("TAP TO RETRY")
                 .font(.custom("ChakraPetch-SemiBold", size: 12))
                 .tracking(3)

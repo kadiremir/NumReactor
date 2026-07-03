@@ -15,6 +15,7 @@ final class GameState: ObservableObject {
     @Published private(set) var selectedSum: Int = 0
     @Published private(set) var reactionCount: Int = 0
     @Published private(set) var isGameOver: Bool = false
+    @Published private(set) var isNewBest: Bool = false
     @Published var lastReaction: GameEngine.ReactionResult?
 
     private let engine = GameEngine()
@@ -26,6 +27,7 @@ final class GameState: ObservableObject {
 
     func startNewGame() {
         lastReaction = nil
+        isNewBest = false
         engine.startNewGame()
         sync()
     }
@@ -65,6 +67,7 @@ final class GameState: ObservableObject {
     private func persistBestScoreIfNeeded() {
         guard score > bestScore else { return }
         bestScore = score
+        isNewBest = true
         UserDefaults.standard.set(bestScore, forKey: bestScoreDefaultsKey)
     }
 }

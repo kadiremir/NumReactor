@@ -443,7 +443,15 @@ final class ReactorGameScene: SKScene {
         updateVignette(danger: danger, meltdown: hasTriggeredExplosion)
         updateBackgroundAura(danger: danger)
 
-        guard !hasTriggeredExplosion else { return }
+        if hasTriggeredExplosion {
+            // Debris has fully settled behind the meltdown overlay — nothing
+            // left to animate, so stop simulating/rendering rather than
+            // spinning the scene forever at full frame rate off-screen.
+            if particles.particleCount == 0 {
+                isPaused = true
+            }
+            return
+        }
 
         spawnAmbientMotesIfNeeded(dt: dt, danger: danger)
 
@@ -888,7 +896,14 @@ final class ReactorGameScene: SKScene {
         }
         run(.sequence([pullAction, .run { [weak self] in self?.detonate() }]))
 
-        run(.sequence([.wait(forDuration: 1.15), .run { [weak self] in self?.onExplosionComplete?() }]))
+        run(.sequence([.wait(forDuration: 1.15), .run { [weak self] in
+            // Overlay is up now and only dimly visible through the scrim —
+            // no need for full frame rate until debris settles and the scene
+            // pauses itself above. 20 fps matches the dt clamp in update(_:)
+            // so the remaining settle plays at the correct speed, not slow motion.
+            self?.view?.preferredFramesPerSecond = 20
+            self?.onExplosionComplete?()
+        }]))
     }
 
     private func detonate() {
